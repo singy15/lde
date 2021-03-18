@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>lde</title>
+    <script src="/public/js/xra-style.js"></script>
+    <style>
+      * {
+        font-size: 0.7rem;
+      }
+      
+      .sidebar-sticky {
+        position: relative;
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+      }
+
+      .hover-color:hover {
+        color: #007BFF;
+      }
+      
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        border-radius: 10px;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, .1);
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 50, .5);
+        border-radius: 10px;
+        box-shadow:0 0 0 1px rgba(255, 255, 255, .3);
+      }
+    </style>
+    <link rel="stylesheet" href="/public/css/icon-font.css" />
+  </head>
+  <body>
+    <div id="app">
+      <layout
+        layout-id="layout"
+        border-width="4"
+        size-north="4"
+        size-west="4"
+        size-south="4"
+        size-east="4"
+        resizable-north="false"
+        resizable-south="false"
+        resizable-east="false"
+        resizable-west="false"
+      >
+        <template v-slot:north>
+        </template>
+
+        <template v-slot:south>
+        </template>
+
+        <template v-slot:west>
+        </template>
+
+        <template v-slot:east></template>
+
+        <template v-slot:center>
+          <div class="container-fluid">
+            
+            <div class="row">
+              <div class="col p-1">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">Path</div>
+                  </div>
+                  <input
+                    class="form-control"
+                    type="text"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col">
+                
+              </div>
+            </div>
+            
+          </div>
+        </template>
+      </layout>
+    </div>
+
+    <script>
+      // var modules = {{ modules }};
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/underscore@1.12.0/underscore-min.js"></script>
+    <script src="/public/lib/shortcut.js"></script>
+    <script src="https://pagecdn.io/lib/ace/1.4.12/ace.min.js"></script>
+    <script src="https://pagecdn.io/lib/ace/1.4.12/ext-language_tools.min.js"></script>
+    <script src="https://pagecdn.io/lib/ace/1.4.12/ext-searchbox.min.js"></script>
+    <script src="https://pagecdn.io/lib/ace/1.4.12/mode-html.min.js"></script>
+    <script src="https://pagecdn.io/lib/ace/1.4.12/mode-lisp.min.js"></script>
+    <script src="https://pagecdn.io/lib/ace/1.4.12/mode-javascript.min.js"></script>
+    <script src="https://unpkg.com/prettier@2.2.0/standalone.js"></script>
+    <script src="https://unpkg.com/prettier@2.2.0/parser-html.js"></script>
+    <script src="https://unpkg.com/prettier@2.2.0/parser-babel.js"></script>
+
+    <%= htmlWebpackPlugin.tags.bodyTags %>
+    
+  </body>
+</html>
