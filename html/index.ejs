@@ -8,6 +8,21 @@
     />
     <title>lde</title>
     <style>
+      @font-face {
+        font-family: 'mplus-1m';
+        src: url(/public/font/mplus-1m-regular.ttf) format('truetype');
+      }
+      
+      @font-face {
+        font-family: 'mplus-1p';
+        src: url(/public/font/mplus-1p-regular.ttf) format('truetype');
+      }
+      
+      html {
+        font-family: 'mplus-1p';
+        font-size: 13px;
+      }
+      
       ::-webkit-scrollbar {
         width: 6px;
         height: 6px;
@@ -28,7 +43,7 @@
       }
       
       .input-path {
-        font-size:11px; 
+        font-size:0.85rem; 
         padding-left:10px; 
         padding-right:10px; 
         padding-top:3px; 
@@ -125,14 +140,15 @@
             
             <div class="planet"></div>
 
-            <span style="font-size:0.8rem; color:white; display:block; 
+            <span style="color:white; display:block; 
               position:absolute; top:8px; left:32px; 
               text-decoration:underline;
               z-index:2000;">&nbsp;&nbsp;&nbsp;lde&nbsp;&nbsp;&nbsp;&nbsp;</span>
 
               <span class="span-button" style="position:absolute; left:120px; top:4px; 
                   line-height:26px; margin-left:5px; 
-                  margin-right:5px; cursor:pointer; font-size: 0.5rem;"
+                  margin-right:5px; cursor:pointer;
+                  font-size:0.9rem;"
                 @click="openSession">
                 [[ (sessionOpened)? 'Stop' : 'Run' ]]
               </span>
@@ -148,14 +164,14 @@
 
         <!-- South -->
         <template v-slot:south>
-          <span style="color:white; font-size:0.5rem"
+          <span style="color:white;"
             >&nbsp;[[ statusMessage ]]</span
           >
         </template>
 
         <!-- West -->
         <template v-slot:west>
-          <div style="font-size:0.8rem; white-space:nowrap; 
+          <div style="white-space:nowrap; 
             overflow:hidden auto; position:absolute; left:0px; 
             top:0px; right:0px; bottom:0px; padding:5px;">
             
@@ -186,7 +202,6 @@
                 @selected="moduleSelected"
                 @on-open="onOpen"
                 :selected-item="selectedModule"
-                style="font-size:0.75rem; line-height:0.8;"
               >
               </treeitem>
             </span>
@@ -223,7 +238,7 @@
                 style="position:absolute; top:0px; height:30px; 
                 left:0px; width:100%; border-bottom:solid 1px #AAA;"
               >
-                <span class="nav nav-tabs" style="font-size:0.7rem">
+                <span class="nav nav-tabs" style="font-size:0.9rem">
                   <span :class="'nav-item ' + ((selectedTab === tab.name)? ' bg-dark-active' : '')" 
                     v-for="tab in tabs" style="box-sizing:border-box; border-right:solid 1px #FFF; border-bottom:solid 1px #FFF; padding:6px;">
                     <span
@@ -304,7 +319,7 @@
                   bottom:0px; left:0px; width:100%; text-align:center;"
                 >
                   <span
-                    style="display:inline-block; position:relative; top:50%; font-size:0.5rem;"
+                    style="display:inline-block; position:relative; top:50%;"
                   ></span>
                 </div>
               </div>
