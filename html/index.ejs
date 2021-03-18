@@ -142,10 +142,10 @@
                   line-height:26px; margin-left:5px; 
                   margin-right:5px; cursor:pointer; font-size: 0.5rem;"
                 @click="openSession">
-                [[ (sessionOpened)? 'Running' : 'Stopped' ]]
+                [[ (sessionOpened)? 'Stop' : 'Run' ]]
               </span>
               <div style="position:absolute; display:inline-block; 
-                  top:6px; left:180px; right:0px;">
+                  top:6px; left:160px; right:0px;">
                 <input class="input-path" v-model="curPath" 
                   @keydown.enter="changeRoot" 
                 style="width:calc(100% - 30px);"/>
