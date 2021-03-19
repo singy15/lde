@@ -11,7 +11,7 @@ var treeitem = {
           @dblclick="dblClick">
           
           <span :style="'margin-left: ' + ((level * 10)).toString() + 'px;'"></span>
-          <span :class="icon" @click="toggle">{{ (item.entry === "directory")? ((isOpen)? "-" : "+") : "" }}</span>
+          <span style="display:inline-block; width:10px;" :class="icon" @click="toggle">{{ (item.entry === "directory")? ((isOpen)? "-" : "+") : "" }}</span>
           <span 
             :style="(item.name === selectedItem)? 'text-decoration: underline; cursor: pointer; white-space: nowrap;' : 'cursor: pointer; white-space: nowrap;'" 
             @click="clicked">
