@@ -11,10 +11,16 @@ var treeitem = {
           @dblclick="dblClick">
           
           <span :style="'margin-left: ' + ((level * 10)).toString() + 'px;'"></span>
-          <span style="display:inline-block; width:10px;" :class="icon" @click="toggle">{{ (item.entry === "directory")? ((isOpen)? "-" : "+") : "" }}</span>
+          <span style="display:inline-block; width:10px;" :class="icon" @click="toggle">
+            <img v-if="(item.entry === 'directory') && (!isOpen)" src="/public/svg/plus.svg" width="10" height="10"/>
+            <img v-if="(item.entry === 'directory') && (isOpen)" src="/public/svg/minus.svg" width="10" height="10"/>
+          </span>
+          
           <span 
             :style="(item.name === selectedItem)? 'text-decoration: underline; cursor: pointer; white-space: nowrap;' : 'cursor: pointer; white-space: nowrap;'" 
             @click="clicked">
+            <img v-if="item.entry === 'directory'" src="/public/svg/directory.svg" width="12" height="10"/>
+            <img v-if="!(item.entry === 'directory')" src="/public/svg/file.svg" width="12" height="12"/>
             &nbsp;{{ item.name }}{{ (item.entry === "directory")? "/" : "" }}
           </span>
 

@@ -242,15 +242,13 @@
                 <!-- Application -->
                 <div
                   style="position:absolute; top:0px; 
-                  bottom:0px; left:0px; right:0px;"
-                >
+                  bottom:0px; left:0px; right:0px;">
                   <iframe
                     class="embed-responsive-item"
                     v-for="tab in tabs"
                     :src="tab.src"
                     style="width:100%;height:100%;border:none;"
-                    v-show="selectedTab === tab.name"
-                  >
+                    v-show="selectedTab === tab.name">
                   </iframe>
                 </div>
   
