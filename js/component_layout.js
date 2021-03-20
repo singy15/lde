@@ -21,8 +21,7 @@ var layout = {
           draggable="true"
           @dragstart="dragstart('north', $event)"
           @drag="drag('north', $event)"
-          v-if="!resizableNorth"
-          v-if="!disableNorth"
+          v-if="!resizableNorth && !disableNorth"
         ></div>
 
         <div
@@ -38,8 +37,7 @@ var layout = {
           draggable="true"
           @dragstart="dragstart('south', $event)"
           @drag="drag('south', $event)"
-          v-if="!resizableSouth"
-          v-if="!disableSouth"
+          v-if="!resizableSouth && !disableSouth"
         ></div>
 
         <div
@@ -55,8 +53,7 @@ var layout = {
           draggable="true"
           @dragstart="dragstart('west', $event)"
           @drag="drag('west', $event)"
-          v-if="!resizableWest"
-          v-if="!disableWest"
+          v-if="!resizableWest && !disableWest"
         ></div>
 
         <div
@@ -72,8 +69,7 @@ var layout = {
           draggable="true"
           @dragstart="dragstart('east', $event)"
           @drag="drag('east', $event)"
-          v-if="!resizableEast"
-          v-if="!disableEast"
+          v-if="!resizableEast && !disableEast"
         ></div>
 
         <div
