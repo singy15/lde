@@ -88,12 +88,11 @@
               text-decoration:underline;
               z-index:2000;">&nbsp;&nbsp;&nbsp;lde&nbsp;&nbsp;&nbsp;&nbsp;</span>
 
-              <span class="span-button" style="position:absolute; left:120px; top:4px; 
-                  line-height:26px; margin-left:5px; 
-                  margin-right:5px; cursor:pointer;
-                  font-size:0.85rem;"
+              <span class="span-button" style="position:absolute; 
+                  left:140px; top:10px; cursor:pointer;"
                 @click="openSession">
-                [[ (sessionOpened)? 'Stop' : 'Run' ]]
+                <img v-if="!sessionOpened" src="/public/svg/play.svg"/>
+                <img v-if="sessionOpened" src="/public/svg/stop.svg"/>
               </span>
               <div style="position:absolute; display:inline-block; 
                   top:6px; left:160px; right:0px;">
