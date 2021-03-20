@@ -55,7 +55,7 @@
         layout-id="layout"
         disable-east="true"
         disable-west="true"
-        size-north="24"
+        size-north="26"
         disable-south="true"
         class-north="bg-dark text-light"
         class-south="bg-dark text-light"
@@ -68,11 +68,21 @@
         resizable-west="false"
       >
         <template v-slot:north>
-          <div class="text-light" style="padding:2px;">
-            <span class="span-button" @click="postFile">Save</span>
-            <span class="span-button">Refresh</span>
-            <span class="span-button" @click="evaluate">Evaluate</span>
-            <label class="span-button" v-if="language === 'lisp'"><input type="checkbox" v-model="evalOnSave"/>EvalOnSave</label>
+          <div class="text-light" style="padding-left:5px;">
+            
+            <span class="span-button" @click="postFile" style="line-height:15px;">
+              <img style="display:inline-block; vertical-align:middle;" src="/public/svg/floppy.svg" width="15" height="15"/>
+              <span style="display:inline-block; vertical-align:middle;">Save</span>
+            </span>
+            <!-- <span class="span-button">Refresh</span> -->
+            <span class="span-button" @click="evaluate" v-if="language === 'lisp'" style="line-height:15px;">
+              <img style="display:inline-block; vertical-align:middle;" src="/public/svg/eval.svg" width="15" height="15"/>
+              <span style="display:inline-block; vertical-align:middle;">Evaluate</span>
+            </span>
+            <label class="span-button" v-if="language === 'lisp'" style="line-height:15px;">
+              <input style="display:inline-block; vertical-align:middle;" type="checkbox" v-model="evalOnSave"/>
+              <span style="display:inline-block; vertical-align:middle;">EvalOnSave</span>
+            </label>
           </div>
         </template>
 

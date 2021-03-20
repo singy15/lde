@@ -46,7 +46,6 @@ html {
   cursor: pointer;
   margin: 3px;
   font-size:0.7rem;
-  text-decoration: underline;
 }
 
 .span-button:hover {
