@@ -1,15 +1,11 @@
-@font-face {
-  font-family: 'mplus-1m';
-  src: url(/public/font/mplus-1m-regular.ttf) format('truetype');
-}
 
 @font-face {
-  font-family: 'mplus-1p';
-  src: url(/public/font/mplus-1p-regular.ttf) format('truetype');
+  font-family: 'NotoSansJP-Light';
+  src: url(/public/font/Noto_Sans_JP/NotoSansJP-Light.otf) format('opentype');
 }
 
 html {
-  font-family: 'mplus-1p';
+  font-family: 'NotoSansJP-Light';
   font-size: 13px;
 }
 
