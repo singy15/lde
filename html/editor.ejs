@@ -1,22 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" href="/public/css/style.css">
     <style>
-      @font-face {
-        font-family: 'mplus-1m';
-        src: url(/public/font/mplus-1m-regular.ttf) format('truetype');
-      }
-      
-      @font-face {
-        font-family: 'mplus-1p';
-        src: url(/public/font/mplus-1p-regular.ttf) format('truetype');
-      }
-      
-      html {
-        font-family: 'mplus-1p';
-        font-size: 13px;
-      }
-      
       html,body {
         width:100%;
         height:100%;
@@ -45,39 +31,6 @@
         padding:5px
       }
 
-      ::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-      }
-      
-      ::-webkit-scrollbar-track {
-        border-radius: 10px;
-        box-shadow: inset 0 0 5px rgba(0, 0, 0, .1);
-      }
-      
-      ::-webkit-scrollbar-thumb {
-        background-color: rgba(0, 0, 50, .1);
-        border-radius: 10px;
-        box-shadow:0 0 0 1px rgba(255, 255, 255, .3);
-      }
-      
-      ::-webkit-scrollbar-thumb:hover {
-        background-color: rgba(255, 255, 255, .5);
-        border-radius: 10px;
-        box-shadow:0 0 0 1px rgba(255, 255, 255, .3);
-      }
-      
-      .span-button {
-        cursor: pointer;
-        margin: 3px;
-        font-size:0.85rem;
-        text-decoration: underline;
-      }
-      
-      .span-button:hover {
-        color: #007BFF;
-      }
-      
       .blocker {
         position:fixed;
         left:0px;
@@ -87,10 +40,6 @@
         background-color:#000;
         opacity:0.5;
         z-index:9999;
-      }
-      
-      .text-light {
-        color: #f8f9fa;
       }
     </style>
   </head>
