@@ -123,9 +123,11 @@
               <tips msg="Refresh" v-on:on-hover="msgChanged">
                 <span class="span-button" @click="refreshDirectory">Refresh</span>
               </tips>
+              -->
               <tips msg="New file" v-on:on-hover="msgChanged">
                 <span class="span-button" @click="newFile">Add</span>
               </tips>
+              <!--
               <tips msg="Delete file" v-on:on-hover="msgChanged">
                 <span class="span-button" @click="deleteFile">Delete</span>
               </tips>
@@ -316,6 +318,20 @@
         </div>
       </div>
       -->
+      
+      <!-- File create modal -->
+      <modal modal-width="400" modal-height="200" :show="showFileCreateModal">
+        <span>Creating file</span>
+        <br>
+        <br>
+        <span>Please input file name:</span>
+        <br>
+        <input v-model="nameNewFile" style="width:200px;"/>
+        <br>
+        <br>
+        <button type="button" @click="openNewFile">Create</button>&nbsp;
+        <button type="button" @click="cancelNewFile">Cancel</button>
+      </modal>
       
     </div>
 

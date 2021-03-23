@@ -4,6 +4,7 @@ import { editor } from "./component_editor.js";
 import { treeitem } from "./component_treeitem.js";
 import { tips } from "./component_tips.js";
 import { StorageUtil } from "./storage_util.js";
+import { modal } from "./component_modal.js";
 
 var storageUtil = new StorageUtil("lde/index/");
 
@@ -18,6 +19,7 @@ window.app = new Vue({
     ,"editor": editor
     ,"treeitem": treeitem
     ,"tips": tips
+    ,"modal": modal
   },
   data: {
     fileType: "",
@@ -58,7 +60,8 @@ window.app = new Vue({
     nameNewFile: "",
     selectedItem: null,
     southSize: storageUtil.getStorage("southSize", 200),
-    southEastSize: storageUtil.getStorage("southEastSize", 200)
+    southEastSize: storageUtil.getStorage("southEastSize", 200),
+    showFileCreateModal: false
   },
   methods: {
     onMountedEditorConsole: function (editor) {
@@ -365,7 +368,7 @@ window.app = new Vue({
         return;
       }
       
-      $("#modal1").modal("show");
+      this.showFileCreateModal = true;
     }
     ,openNewFile: function() {
       var tabName = "TAB:" + app.tabs.length.toString();
@@ -375,6 +378,13 @@ window.app = new Vue({
         dispName: this.nameNewFile, 
       });
       this.selectedTab = tabName;
+      
+      if(this.showFileCreateModal) {
+        this.showFileCreateModal = false;
+      }
+    }
+    ,cancelNewFile: function() {
+      this.showFileCreateModal = false;
     }
     ,refreshDirectory: function() {
       if((this.selectedItem == null) 
