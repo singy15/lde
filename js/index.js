@@ -61,7 +61,8 @@ window.app = new Vue({
     selectedItem: null,
     southSize: storageUtil.getStorage("southSize", 200),
     southEastSize: storageUtil.getStorage("southEastSize", 200),
-    showFileCreateModal: false
+    showFileCreateModal: false,
+    showFileDeleteModal: false
   },
   methods: {
     onMountedEditorConsole: function (editor) {
@@ -394,8 +395,13 @@ window.app = new Vue({
       this.selectedItem.children = [];
       this.refreshFilelist(this.selectedItem.path);
     }
+    ,showFileDelete: function() {
+      this.showFileDeleteModal = true;
+    }
     ,deleteFile: function() {
       var self = this;
+      
+      this.showFileDeleteModal = false;
       
       if((this.selectedItem == null) 
         && (this.selectedItem.entry !== "file")) {
@@ -417,8 +423,12 @@ window.app = new Vue({
         })
         .then(function (data) {
           console.log(data);
-          $("#modal2").modal("show");
+          //$("#modal2").modal("show");
+          alert("File deleted!");
         }); 
+    }
+    ,cancelDeleteFile: function() {
+      this.showFileDeleteModal = false;
     }
     ,onResizeSouth: function(south) {
       this.southSize = south;

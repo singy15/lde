@@ -127,11 +127,9 @@
               <tips msg="New file" v-on:on-hover="msgChanged">
                 <span class="span-button" @click="newFile">Add</span>
               </tips>
-              <!--
               <tips msg="Delete file" v-on:on-hover="msgChanged">
-                <span class="span-button" @click="deleteFile">Delete</span>
+                <span class="span-button" @click="showFileDelete">Delete</span>
               </tips>
-              -->
             </div>
 
             <!-- File tree -->
@@ -331,6 +329,18 @@
         <br>
         <button type="button" @click="openNewFile">Create</button>&nbsp;
         <button type="button" @click="cancelNewFile">Cancel</button>
+      </modal>
+      
+      <!-- File delete modal -->
+      <modal modal-width="400" modal-height="200" :show="showFileDeleteModal">
+        <span>Deleting file</span>
+        <br>
+        <br>
+        <span>Are you sure?</span>
+        <br>
+        <br>
+        <button type="button" @click="deleteFile">Yes</button>&nbsp;
+        <button type="button" @click="cancelDeleteFile">Cancel</button>
       </modal>
       
     </div>
