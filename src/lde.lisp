@@ -32,14 +32,19 @@
   (defparameter *port-web* port)
   (defparameter *port-ws* (+ port 1))
 
+  (format t "lde starts on port ~a ~a~%" *port-web* *port-ws*)
+
   ;; Create server instance
   (setf *lde-server* 
         (make-instance 'easy-routes:easy-routes-acceptor 
                        :port *port-web*
-                       :document-root (asdf:system-relative-pathname :lde "document-root/")))
+                       :document-root "document-root/"))
   
   ;; Start listen
   (hunchentoot:start *lde-server*)
+
+  ;; Open web socket
+  (open-web-socket)
   
   ;; Set initial basepath
   (defparameter *basepath* (namestring (truename "")))
@@ -305,18 +310,29 @@
 #|
  | WebSocket
  |#
+(defun open-web-socket ()
+  (defvar *session-ws-server*
+    (lambda (env)
+      (let ((ws (make-server env)))
+        (on :message ws
+            (lambda (message)
+              (send ws message)))
+        (on :open ws
+            (lambda ()
+              (setf *session-clients* (append *session-clients* (list ws)))))
+        (lambda (responder)
+          (declare (ignore responder))
+          (start-connection ws))))))
 
-(defvar *session-ws-server*
-  (lambda (env)
-    (let ((ws (make-server env)))
-      (on :message ws
-          (lambda (message)
-            (send ws message)))
-      (on :open ws
-          (lambda ()
-            (setf *session-clients* (append *session-clients* (list ws)))))
-      (lambda (responder)
-        (declare (ignore responder))
-        (start-connection ws)))))
+
+#|
+ | Program entry point
+ |#
+(defun main ()
+  (start-lde-server 
+    ; (+ 40000 (random 1000 (make-random-state t)))
+    (read-from-string (nth 1 (sb-ext:*posix-argv*)))
+    ))
+
 
 (in-package :cl-user)
