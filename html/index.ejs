@@ -125,10 +125,16 @@
               </tips>
               -->
               <tips msg="New file" v-on:on-hover="msgChanged">
-                <span class="span-button" @click="newFile">Add</span>
+                <span class="span-button" @click="newFile">
+                  <img src="/public/svg/plus.svg" width="10" height="10"/>
+                  Add
+                </span>
               </tips>
               <tips msg="Delete file" v-on:on-hover="msgChanged">
-                <span class="span-button" @click="showFileDelete">Delete</span>
+                <span class="span-button" @click="showFileDelete">
+                  <img src="/public/svg/cross.svg" width="10" height="10"/>
+                  Delete
+                </span>
               </tips>
             </div>
 
