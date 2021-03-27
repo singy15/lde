@@ -86,6 +86,10 @@ window.app = new Vue({
       }
     },
     changeRoot: function() {
+      this.curPath = this.curPath.replace(/\\/g, '/');
+      if(this.curPath[this.curPath.length -1] !== '/') {
+        this.curPath = this.curPath + "/";
+      }
       console.log(this.curPath);
       var self = this;
       fetch(encodeURI("/set-root"), {
