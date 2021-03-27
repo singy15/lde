@@ -4,12 +4,13 @@
  | Configuration
  |#
 
-;; Set auto escape
+;; Configure djula
 (setf djula:*auto-escape* nil)
+(setf djula:*catch-template-errors-p* nil)
+(setf djula:*fancy-error-template-p* nil)
 
 ;; Add template directory
-(djula:add-template-directory
-  (asdf:system-relative-pathname :lde "templates/"))
+(djula:add-template-directory "templates/")
 
 
 #|
@@ -18,7 +19,10 @@
 
 ;; Server instance
 (defparameter *lde-server* nil)
-
+(defparameter *config* :development) ; :development | :production
+(defparameter *time-to-shutdown* nil)
+(defparameter *max-time-to-shutdown* (* 60 1))
+(defparameter *os-type* :mswin) ; :linux | :mswin
 
 #|
  | Server
@@ -43,19 +47,65 @@
   ;; Start listen
   (hunchentoot:start *lde-server*)
 
+  ;; Time to shutdown
+  (keep-server-alive)
+
   ;; Open web socket
   (open-web-socket)
   
   ;; Set initial basepath
   (defparameter *basepath* (namestring (truename "")))
-  
+
   ;; Start websocket server
   (clack:clackup *session-ws-server* :server :hunchentoot :port *port-ws*)
 
   ;; Set session
   (defparameter *session* nil)
   (defparameter *session-output-stream* nil)
-  (defparameter *session-input-stream* nil))
+  (defparameter *session-input-stream* nil)
+  (defparameter *session-thread-alive* nil)
+  (defparameter *session-thread* nil)
+  (defparameter *session-output-send-thread* nil)
+
+  ;; Auto open browser
+  (sb-ext:run-program 
+    (cond ((equal *os-type* :linux) "/usr/bin/xdg-open")
+          ((equal *os-type* :mswin) "C:\\Windows\\explorer.exe")) 
+    (list (format nil "http://localhost:~a/" *port-web*)) :wait nil)
+
+  ;; Wait for shutdown
+  (loop
+    (decf *time-to-shutdown*)
+    (when (< *time-to-shutdown* 0)
+
+      (when *session-thread*
+        (bordeaux-threads:destroy-thread *session-thread*))
+
+      (when *session-output-send-thread*
+        (bordeaux-threads:destroy-thread *session-output-send-thread*))
+
+      (when *session*
+        (sb-ext:process-kill *session* 15 :process-group)
+        (sb-ext:process-wait *session*)
+        (sb-ext:process-close *session*)
+        (sb-ext:process-exit-code *session*)
+        (setf *session* nil))
+
+
+      ; (format t "Signal kill thread~%")
+      ; (setf *session-thread-alive* nil)
+
+      ; (when *session-thread*
+      ;   (format t "Wait for join-thread *session-thread*~%")
+      ;   (bordeaux-threads:join-thread *session-thread*))
+
+      ; (when *session-output-send-thread*
+      ;   (format t "Wait for join-thread *session-output-send-thread~%")
+      ;   (bordeaux-threads:join-thread *session-output-send-thread*))
+
+      (cl-user::exit))
+    (sleep 1))
+)
 
 ;;; Stop lde server
 (defun stop-lde-server ()
@@ -106,6 +156,28 @@
       `((data . ,nil)
         (success . ,t)))))
         
+(defun do-session-thread ()
+  (sleep 1)
+  (loop
+    (when (or (not *session*) (not *session-thread-alive*))
+      (format t "return from watch-output~%")
+      (return-from do-session-thread))
+    (let ((str (read-char *session-output-stream*)))
+      (setf *session-output-string* 
+            (format nil "~a~a" *session-output-string* str)))))
+
+(defun do-session-output-send-thread ()
+  (loop
+    (progn
+      (sleep 1)
+      (when (not *session-thread-alive*)
+        (format t "return from send-output~%")
+        (return-from do-session-output-send-thread))
+      (mapc (lambda (c)
+        (wsd:send c (format nil "~a" *session-output-string*)))
+        *session-clients*)
+      (setf *session-output-string* ""))))
+
 ;;; Open session
 (defroute post-session-open ("/session/open" :method :post) ()
   (let* ((param (json:decode-json-from-string (hunchentoot:raw-post-data :force-text t))))
@@ -128,6 +200,7 @@
     (defparameter *session-output-stream* (sb-ext:process-output *session*))
     (defparameter *session-input-stream* (sb-ext:process-input *session*))
     (defparameter *session-clients* (list))
+    (defparameter *session-thread-alive* t)
     
     ;; Prepare thread variable
     ; (format *session-input-stream* "(defparameter *lde-thread* nil)~%")
@@ -137,27 +210,13 @@
 
     (defparameter *session-thread* 
       (bordeaux-threads:make-thread 
-        (lambda ()
-          (sleep 1)
-          (block watch-output
-            (loop
-              (when (not *session*)
-                (return-from watch-output))
-
-              (let ((str (read-char *session-output-stream*)))
-                (setf *session-output-string* (format nil "~a~a" *session-output-string* str))))))
+        #'do-session-thread
         :name "session-thread"))
         
     (defparameter *session-output-send-thread*
-      (bordeaux-threads:make-thread
-        (lambda ()
-          (loop
-            (progn
-              (sleep 1)
-              (mapc (lambda (c)
-                (wsd:send c (format nil "~a" *session-output-string*)))
-                *session-clients*)
-              (setf *session-output-string* ""))))))
+      (bordeaux-threads:make-thread 
+        #'do-session-output-send-thread
+        :name "session-output-send-thread"))
 
     (json:encode-json-to-string
       `((data . ,nil)
@@ -305,6 +364,33 @@
     (djula:render-template* 
       (djula:compile-template* "explorer.html") 
       nil)))
+
+
+#|
+ | Handler / Server
+ |#
+
+;;; Reset kill timer
+(defun keep-server-alive ()
+  (setf *time-to-shutdown* *max-time-to-shutdown*))
+
+;;; GET /siki/keep-alive
+(defroute get-keep-alive ("/siki/keep-alive" :method :get) ()
+  (keep-server-alive)
+  (json:encode-json-to-string 
+    `(:success t :time ,*time-to-shutdown*)))
+
+; ;;; GET /siki/server-state
+; (defroute get-server-state ("/siki/server-state" :method :get) ()
+;   (json:encode-json-to-string 
+;     `((:success . t) 
+;       (:siki-port . ,*siki-port*)
+;       (:swank-port . ,*swank-port*))))
+; 
+
+;;; GET /siki/shutdown
+(defroute get-siki-shutdown ("/siki/shutdown" :method :get) ()
+  (cl-user::exit))
       
       
 #|
@@ -330,8 +416,8 @@
  |#
 (defun main ()
   (start-lde-server 
-    ; (+ 40000 (random 1000 (make-random-state t)))
-    (read-from-string (nth 1 (sb-ext:*posix-argv*)))
+    (+ 40000 (random 1000 (make-random-state t)))
+    ; (read-from-string (nth 1 (sb-ext:*posix-argv*)))
     ))
 
 

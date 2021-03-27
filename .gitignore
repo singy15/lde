@@ -9,3 +9,7 @@
 node_modules/*
 templates/*
 document-root/public/js/*
+/release
+/lde.exe
+/start-lde-server.bat
+/start-webpack-watch.bat
