@@ -351,7 +351,7 @@
   
       ;; Eval in main thread
       (progn
-        (format *session-input-stream* "(progn ~a)~%" src src)
+        (format *session-input-stream* "~a~%" src src)
         (finish-output *session-input-stream*)))
     
     (json:encode-json-to-string
