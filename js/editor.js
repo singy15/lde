@@ -248,7 +248,7 @@ var app = new Vue({
           self.blocked = false;
         });
     },
-    postFile: function () {
+    postFile: function (multithread) {
       this.blocked = true;
       var self = this;
       console.log(self.evalOnSave);
@@ -256,7 +256,8 @@ var app = new Vue({
         method: "POST",
         body: JSON.stringify({
           content: self.src,
-          evalOnSave: self.evalOnSave
+          evalOnSave: self.evalOnSave,
+          multithread: multithread
         }),
         headers: {
           "Content-Type": "application/json;charset=utf-8",
@@ -405,7 +406,7 @@ var app = new Vue({
       this.filepath = item.path;
       this.getFile();
     },
-    evaluate: function() {
+    evaluate: function(multithread) {
       var self = this;
       console.log(this.editor.getSelectedText())
       
@@ -413,6 +414,7 @@ var app = new Vue({
         method: "POST",
         body: JSON.stringify({
           src: self.editor.getSelectedText(),
+          multithread: multithread
         }),
         headers: {
           "Content-Type": "application/json;charset=utf-8",
@@ -430,15 +432,22 @@ var app = new Vue({
   },
 });
 
-shortcut.add("Ctrl+s", function () {
-  app.postFile();
+shortcut.add("Ctrl+Shift+S", function () {
+  app.postFile(true);
 });
 
-shortcut.add("Ctrl+e", function () {
-  app.evaluate();
+shortcut.add("Ctrl+S", function () {
+  app.postFile(false);
 });
 
-console.log("foo");
+shortcut.add("Ctrl+Shift+B", function () {
+  app.evaluate(true);
+});
+
+shortcut.add("Ctrl+B", function () {
+  app.evaluate(false);
+});
+
 
 app.refreshFilelist();
 app.getFile();

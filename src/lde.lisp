@@ -203,8 +203,8 @@
     (defparameter *session-thread-alive* t)
     
     ;; Prepare thread variable
-    ; (format *session-input-stream* "(defparameter *lde-thread* nil)~%")
-    ; (finish-output *session-input-stream*)
+    (format *session-input-stream* "(defpackage lde.client (:use cl) (:export *lde-thread*))~%(defparameter lde.client:*lde-thread* nil)~%")
+    (finish-output *session-input-stream*)
 
     (defparameter *session-output-string* "")
 
@@ -291,7 +291,8 @@
 (defroute post-editor-put ("/editor/file" :method :post) (filepath)
   (let* ((param (json:decode-json-from-string 
                  (hunchentoot:raw-post-data :force-text t)))
-         (eval-on-save (cdr (assoc :eval-on-save param))))
+         (eval-on-save (cdr (assoc :eval-on-save param)))
+         (multithread (cdr (assoc :multithread param))))
     (lde.util:spit (merge-pathnames filepath *basepath*)
           (lde.util:trim (cdr (assoc :content param))))
     
@@ -316,16 +317,16 @@
       ; (format *session-input-stream* "(sb-thread:make-thread (lambda () (load \"~a\")))~%" 
       ;   (merge-pathnames (format nil "~a.lisp" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*))))
        
-
-      ;; Eval in sub thread
-      ; (format *session-input-stream* "(if (and *lde-thread* (sb-thread:thread-alive-p *lde-thread*)) (sb-thread:interrupt-thread *lde-thread* (lambda () (load \"~a\"))) (setf *lde-thread* (sb-thread:make-thread (lambda () (load \"~a\")))))~%"
-      ;   (merge-pathnames (format nil "~a.lisp" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*)))
-      ;   (merge-pathnames (format nil "~a.lisp" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*))))
-
-      ;; Eval in main thread
-      (format *session-input-stream* "(load \"~a\")~%"
-        (merge-pathnames (format nil "~a.lisp" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*))))
+      (if multithread
+        ;; Eval in sub thread
+        (format *session-input-stream* "(if (and lde.client:*lde-thread* (sb-thread:thread-alive-p lde.client:*lde-thread*)) (sb-thread:interrupt-thread lde.client:*lde-thread* (lambda () (load \"~a\"))) (setf lde.client:*lde-thread* (sb-thread:make-thread (lambda () (load \"~a\")))))~%"
+          (merge-pathnames (format nil "~a.lisp" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*)))
+          (merge-pathnames (format nil "~a.lisp" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*))))
   
+        ;; Eval in main thread
+        (format *session-input-stream* "(load \"~a\")~%"
+          (merge-pathnames (format nil "~a.lisp" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*)))))
+
       ; (load (merge-pathnames (format nil "~a.fasl" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*))))
       (finish-output *session-input-stream*))
     
@@ -338,16 +339,20 @@
 (defroute post-editor-eval ("/editor/eval" :method :post) ()
   (let* ((param (json:decode-json-from-string 
                  (hunchentoot:raw-post-data :force-text t)))
-         (src (cdr (assoc :src param))))
+         (src (cdr (assoc :src param)))
+         (multithread (cdr (assoc :multithread param))))
     (hunchentoot:log-message* :INFO src)
     
-    ;; Eval in sub thread
-    ; (format *session-input-stream* "(if (and *lde-thread* (sb-thread:thread-alive-p *lde-thread*)) (sb-thread:interrupt-thread *lde-thread* (lambda () ~a)) (setf *lde-thread* (sb-thread:make-thread (lambda () ~a))))~%" src src)
-    ; (finish-output *session-input-stream*)
-
-    ;; Eval in main thread
-    (format *session-input-stream* "(progn ~a)~%" src src)
-    (finish-output *session-input-stream*)
+    (if multithread
+      ;; Eval in sub thread
+      (progn
+        (format *session-input-stream* "(if (and lde.client:*lde-thread* (sb-thread:thread-alive-p lde.client:*lde-thread*)) (sb-thread:interrupt-thread lde.client:*lde-thread* (lambda () ~a)) (setf lde.client:*lde-thread* (sb-thread:make-thread (lambda () ~a))))~%" src src)
+        (finish-output *session-input-stream*))
+  
+      ;; Eval in main thread
+      (progn
+        (format *session-input-stream* "(progn ~a)~%" src src)
+        (finish-output *session-input-stream*)))
     
     (json:encode-json-to-string
       `((data . ,src)

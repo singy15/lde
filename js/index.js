@@ -345,7 +345,7 @@ window.app = new Vue({
           self.sessionOpened = data.data;
         });
     }
-    ,evaluate: function() {
+    ,evaluate: function(multithread) {
       var self = this;
       this.contentConsole += this.editorConsoleInput.getSelectedText() + "\n";
       console.log(this.editorConsoleInput.getSelectedText())
@@ -354,6 +354,7 @@ window.app = new Vue({
         method: "POST",
         body: JSON.stringify({
           src: self.editorConsoleInput.getSelectedText(),
+          multithread: multithread
         }),
         headers: {
           "Content-Type": "application/json;charset=utf-8",
@@ -448,8 +449,12 @@ window.app = new Vue({
 /*
  * Register shortcut
  */
-shortcut.add("Ctrl+e", function () {
-  app.evaluate();
+shortcut.add("Ctrl+Shift+B", function () {
+  app.evaluate(true);
+});
+
+shortcut.add("Ctrl+B", function () {
+  app.evaluate(false);
 });
 
 // Refresh file list
