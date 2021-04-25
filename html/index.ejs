@@ -24,9 +24,21 @@
       }
       
       .tool-palette {
-        width: 100%;
+        position: relative;
+        top: 0px;
+        left: 0px;
+        right: 0px;
         height: 10px;
         text-align: right;
+      }
+      
+      .file-tree-content {
+        position: relative;
+        top: 20px;
+        left: 0px;
+        right: 0px;
+        height: calc(100% - 30px);
+        overflow: hidden auto;
       }
 
       .planet {
@@ -139,20 +151,22 @@
             </div>
 
             <!-- File tree -->
-            <span id="demo">
-              <treeitem
-                class="item"
-                :item="treeData"
-                :level="0"
-                :open="true"
-                @dbl-click="dblClick"
-                @add-item="addItem"
-                @selected="moduleSelected"
-                @on-open="onOpen"
-                :selected-item="selectedModule"
-              >
-              </treeitem>
-            </span>
+            <div class="file-tree-content">
+              <span id="demo">
+                <treeitem
+                  class="item"
+                  :item="treeData"
+                  :level="0"
+                  :open="true"
+                  @dbl-click="dblClick"
+                  @add-item="addItem"
+                  @selected="moduleSelected"
+                  @on-open="onOpen"
+                  :selected-item="selectedModule"
+                >
+                </treeitem>
+              </span>
+            </div>
           </div>
         </template>
 
