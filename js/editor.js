@@ -58,7 +58,7 @@ Vue.component("Editor", {
       showGutter: true
     });
     
-    this.editor.setKeyboardHandler("ace/keyboard/vim");
+    // this.editor.setKeyboardHandler("ace/keyboard/vim");
 
     this.editor.$blockScrolling = Infinity;
 
