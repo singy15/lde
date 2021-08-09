@@ -36,6 +36,7 @@
 (defparameter *lde-config*
   `(
     :port 9000
+    :auto-open t
   ))
   
 ;;; Load configuration file
@@ -48,6 +49,22 @@
 #|
  | Server
  |#
+ 
+;;; Clear current session
+(defun clear-session ()
+  (defparameter *session* nil)
+  (defparameter *session-output-stream* nil)
+  (defparameter *session-input-stream* nil)
+  (defparameter *session-thread-alive* nil)
+  (defparameter *session-thread* nil)
+  (defparameter *session-output-send-thread* nil))
+  
+;;; Open in browser
+(defun open-in-browser ()
+  (sb-ext:run-program 
+    (cond ((equal *os-type* :linux) "/usr/bin/xdg-open")
+          ((equal *os-type* :mswin) "C:\\Windows\\explorer.exe")) 
+    (list (format nil "http://localhost:~a/" *port-web*)) :wait nil))
 
 ;;; Start server
 (defun start-lde-server (config)
@@ -61,9 +78,9 @@
 
   ;; Create server instance
   (setf *lde-server* 
-        (make-instance 'easy-routes:easy-routes-acceptor 
-                       :port *port-web*
-                       :document-root "document-root/"))
+    (make-instance 'easy-routes:easy-routes-acceptor 
+                   :port *port-web*
+                   :document-root "document-root/"))
   
   ;; Start listen
   (hunchentoot:start *lde-server*)
@@ -81,18 +98,11 @@
   (clack:clackup *session-ws-server* :server :hunchentoot :port *port-ws*)
 
   ;; Set session
-  (defparameter *session* nil)
-  (defparameter *session-output-stream* nil)
-  (defparameter *session-input-stream* nil)
-  (defparameter *session-thread-alive* nil)
-  (defparameter *session-thread* nil)
-  (defparameter *session-output-send-thread* nil)
+  (clear-session)
 
   ;; Auto open browser
-  (sb-ext:run-program 
-    (cond ((equal *os-type* :linux) "/usr/bin/xdg-open")
-          ((equal *os-type* :mswin) "C:\\Windows\\explorer.exe")) 
-    (list (format nil "http://localhost:~a/" *port-web*)) :wait nil)
+  (when (getf config :auto-open)
+    (open-in-browser))
 
   ;; Wait for shutdown
   (loop
@@ -111,7 +121,6 @@
         (sb-ext:process-close *session*)
         (sb-ext:process-exit-code *session*)
         (setf *session* nil))
-
 
       ; (format t "Signal kill thread~%")
       ; (setf *session-thread-alive* nil)
