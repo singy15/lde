@@ -12,6 +12,9 @@
 ;; Add template directory
 (djula:add-template-directory "templates/")
 
+;; Location of configuration file
+(defparameter *config-rel-path* "./config")
+
 
 #|
  | Variables
@@ -24,17 +27,35 @@
 (defparameter *max-time-to-shutdown* (* 60 1))
 (defparameter *os-type* :mswin) ; :linux | :mswin
 
+
+#|
+ | LDE Configuration
+ |#
+ 
+;;; LDE configuration
+(defparameter *lde-config*
+  `(
+    :port 9000
+  ))
+  
+;;; Load configuration file
+(defun load-config ()
+  (if (probe-file *config-rel-path*)
+    (setf *lde-config* (read-from-string (lde.util:slurp *config-rel-path*)))
+    (lde.util:spit *config-rel-path* (format nil "~s" *lde-config*))))
+
+
 #|
  | Server
  |#
 
 ;;; Start server
-(defun start-lde-server (port)
+(defun start-lde-server (config)
   ; ;; Set session timeout
   ; (setf hunchentoot:*session-max-time* (* 60 60 4))
 
-  (defparameter *port-web* port)
-  (defparameter *port-ws* (+ port 1))
+  (defparameter *port-web* (getf config :port))
+  (defparameter *port-ws* (+ (getf config :port) 1))
 
   (format t "lde starts on port ~a ~a~%" *port-web* *port-ws*)
 
@@ -420,9 +441,14 @@
  | Program entry point
  |#
 (defun main ()
+  ;; Load configuration
+  (load-config)
+  
+  ;; Start server
   (start-lde-server 
-    (+ 40000 (random 1000 (make-random-state t)))
+    ; (+ 40000 (random 1000 (make-random-state t)))
     ; (read-from-string (nth 1 (sb-ext:*posix-argv*)))
+    *lde-config*
     ))
 
 
