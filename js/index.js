@@ -60,7 +60,7 @@ window.app = new Vue({
     nameNewFile: "",
     selectedItem: null,
     southSize: storageUtil.getStorage("southSize", 200),
-    southEastSize: storageUtil.getStorage("southEastSize", 200),
+    southEastSize: storageUtil.getStorage("southEastSize", 400),
     showFileCreateModal: false,
     showFileDeleteModal: false
   },
