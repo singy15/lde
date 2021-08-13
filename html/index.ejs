@@ -20,7 +20,7 @@
         border: solid 1px #f8f9fa; 
         border-radius: 4px;
         outline: none;
-        line-height: 18px;
+        line-height: 14px;
       }
       
       .tool-palette {
@@ -100,19 +100,6 @@
               text-decoration:underline;
               z-index:2000;">&nbsp;&nbsp;&nbsp;lde&nbsp;&nbsp;&nbsp;&nbsp;</span>
 
-              <span class="span-button" style="position:absolute; 
-                  left:140px; top:10px; cursor:pointer;"
-                @click="openSession">
-                <img v-if="!sessionOpened" src="/public/svg/play.svg"/>
-                <img v-if="sessionOpened" src="/public/svg/stop.svg"/>
-              </span>
-              <div style="position:absolute; display:inline-block; 
-                  top:6px; left:160px; right:0px;">
-                <input class="input-path" v-model="curPath" 
-                  @keydown.enter="changeRoot" 
-                style="width:calc(100% - 30px);"/>
-              </div>
-              
           </div>
         </template>
 
@@ -132,16 +119,27 @@
             <!-- Tools -->
             <div class="tool-palette">
               <!--
-              <tips msg="Refresh" v-on:on-hover="msgChanged">
+              <tips msg="Refresh file list" v-on:on-hover="msgChanged">
                 <span class="span-button" @click="refreshDirectory">Refresh</span>
               </tips>
               -->
+              
+              <!--
+              <tips msg="" v-on:on-hover="msgChanged">
+                <span class="span-button" @click="newFile">
+                  <img src="/public/svg/directory.svg" width="10" height="10"/>
+                  Open Dir
+                </span>
+              </tips>
+              -->
+              
               <tips msg="New file" v-on:on-hover="msgChanged">
                 <span class="span-button" @click="newFile">
                   <img src="/public/svg/plus.svg" width="10" height="10"/>
                   Add
                 </span>
               </tips>
+              
               <tips msg="Delete file" v-on:on-hover="msgChanged">
                 <span class="span-button" @click="showFileDelete">
                   <img src="/public/svg/cross.svg" width="10" height="10"/>
@@ -246,15 +244,32 @@
                   ></editor>
                 </template>
                 <template v-slot:center>
-                  <editor
-                    v-if="sessionOpened"
-                    editor-id="editor-console"
-                    :content="contentConsole"
-                    v-on:change-content="changeContentConsole"
-                    v-on:on-mounted="onMountedEditorConsole"
-                    :lang="'text'"
-                    theme="monokai"
-                  ></editor>
+                  <div style="height:100%; width:100%;">
+                    <div style="height:24px; vertical-align:middle; border-bottom:solid 1px #FFF;">
+                      
+                      <span class="span-button" style="cursor:pointer; display:inline-block;"
+                        @click="openSession">
+                        <img v-if="!sessionOpened" src="/public/svg/play.svg" style="display:inline-block; width:10px; height:10px; margin-top:2px; margin-left:2px;"/>
+                        <img v-if="sessionOpened" src="/public/svg/stop.svg" style="display:inline-block; width:10px; height:10px; margin-top:2px; margin-left:2px;"/>
+                      </span>
+                      
+                      <input class="input-path" v-model="curPath" 
+                        @keydown.enter="changeRoot" 
+                        style="width:calc(100% - 48px); margin:1px; display:inline-block;"/>
+                      
+                    </div>
+                    <div style="height:calc(100% - 24px); width:100%;">
+                      <editor
+                        v-if="sessionOpened"
+                        editor-id="editor-console"
+                        :content="contentConsole"
+                        v-on:change-content="changeContentConsole"
+                        v-on:on-mounted="onMountedEditorConsole"
+                        :lang="'text'"
+                        theme="monokai"
+                      ></editor>
+                    </div>
+                  </div>
                 </template>
               </layout>
             </template>

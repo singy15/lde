@@ -20,11 +20,9 @@
  | Variables
  |#
 
-;; Server instance
 (defparameter *lde-server* nil)
-(defparameter *config* :development) ; :development | :production
 (defparameter *time-to-shutdown* nil)
-(defparameter *max-time-to-shutdown* (* 60 1))
+(defparameter *max-time-to-shutdown* (* 60 999))
 (defparameter *os-type* :mswin) ; :linux | :mswin
 
 
@@ -68,9 +66,7 @@
 
 ;;; Start server
 (defun start-lde-server (config)
-  ; ;; Set session timeout
-  ; (setf hunchentoot:*session-max-time* (* 60 60 4))
-
+  ;; Set port
   (defparameter *port-web* (getf config :port))
   (defparameter *port-ws* (+ (getf config :port) 1))
 
