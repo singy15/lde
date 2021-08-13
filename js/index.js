@@ -477,7 +477,7 @@ window.app = new Vue({
     }
     ,newFile: function() {
       if((this.selectedItem == null) 
-        || (this.selectedItem.entry !== "directory")) {
+        || (!(this.selectedItem.path.match(/\/$/)))) {
         return;
       }
       
@@ -512,7 +512,7 @@ window.app = new Vue({
     }
     ,showFileDelete: function() {
       if((this.selectedItem == null) 
-        || (this.selectedItem.entry !== "file")) {
+        || (this.selectedItem.path.match(/\/$/))) {
         return;
       }
       
