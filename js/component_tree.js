@@ -4,29 +4,33 @@
 var tree = {
   name: "tree",
   template: `
-      <span style="white-space:nowrap;">
-        <!-- Margin -->
-        <span :style="'margin-left: ' + ((level * 10)).toString() + 'px;'"></span>
+      <span style="white-space:nowrap;  user-select: none;">
+        <span v-if="item.base !== ''">
+      
+          <!-- Margin -->
+          <span :style="'margin-left: ' + (((level - 1) * 10)).toString() + 'px;'"></span>
+          
+          <!-- Opener -->
+          <span style="display:inline-block; width:10px;" @click="toggle">
+            <img v-if="isDirectory && (!isOpen)" src="/public/svg/plus.svg" width="10" height="10"/>
+            <img v-if="isDirectory && (isOpen)" src="/public/svg/minus.svg" width="10" height="10"/>
+          </span>
+          
+          <!-- Icon -->
+          <img v-if="isBaseEntry" src="/public/svg/circle.svg" width="12" height="10"/>
+          <img v-if="!isBaseEntry && isDirectory" src="/public/svg/directory.svg" width="12" height="10"/>
+          <img v-if="!isBaseEntry && !isDirectory" src="/public/svg/file.svg" width="12" height="12"/>
+          
+          <!-- Display name -->
+          <span :style="(item === selectedItem)? 'text-decoration: underline; cursor: pointer; white-space: nowrap;' : 'cursor: pointer; white-space: nowrap;'" 
+              @click="clicked"
+              @dblclick="dblClick">
+            {{ dispName }}
+          </span>
+          
+          <br>
         
-        <!-- Opener -->
-        <span style="display:inline-block; width:10px;" @click="toggle">
-          <img v-if="isDirectory && (!isOpen)" src="/public/svg/plus.svg" width="10" height="10"/>
-          <img v-if="isDirectory && (isOpen)" src="/public/svg/minus.svg" width="10" height="10"/>
         </span>
-        
-        <!-- Icon -->
-        <img v-if="isBaseEntry" src="/public/svg/stop.svg" width="12" height="10"/>
-        <img v-if="!isBaseEntry && isDirectory" src="/public/svg/directory.svg" width="12" height="10"/>
-        <img v-if="!isBaseEntry && !isDirectory" src="/public/svg/file.svg" width="12" height="12"/>
-        
-        <!-- Display name -->
-        <span :style="(item === selectedItem)? 'text-decoration: underline; cursor: pointer; white-space: nowrap;' : 'cursor: pointer; white-space: nowrap;'" 
-            @click="clicked"
-            @dblclick="dblClick">
-          {{ dispName }}
-        </span>
-        
-        <br>
         
         <!-- Children -->
         <span v-show="isOpen">

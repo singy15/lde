@@ -65,6 +65,8 @@ window.app = new Vue({
     southEastSize: storageUtil.getStorage("southEastSize", 400),
     showFileCreateModal: false,
     showFileDeleteModal: false,
+    showOpenDirModal: false,
+    openDirPath: "",
     tree: {
       base: "",
       path: "",
@@ -481,6 +483,9 @@ window.app = new Vue({
       
       this.showFileCreateModal = true;
     }
+    ,openDir: function() {
+      this.showOpenDirModal = true;
+    }
     ,openNewFile: function() {
       var tabName = "TAB:" + app.tabs.length.toString();
       app.tabs.push({
@@ -519,7 +524,7 @@ window.app = new Vue({
       this.showFileDeleteModal = false;
       
       if((this.selectedItem == null) 
-        || (this.selectedItem.entry !== "file")) {
+        || (this.selectedItem.path.match(/\/$/))) {
         return;
       }
      
@@ -544,6 +549,30 @@ window.app = new Vue({
     }
     ,cancelDeleteFile: function() {
       this.showFileDeleteModal = false;
+    }
+    ,addDir: function() {
+      var self = this;
+      
+      this.showOpenDirModal = false;
+      
+      this.openDirPath = this.openDirPath.replace(/\\/g, '/');
+      if(this.openDirPath[this.openDirPath.length -1] !== '/') {
+        this.openDirPath = this.openDirPath + "/";
+      }
+      console.log(this.openDirPath);
+
+      if(this.tree.children[this.openDirPath]) {
+        return;
+      }
+      
+      app.$set(this.tree.children, this.openDirPath, {
+        path: this.openDirPath,
+        base: this.openDirPath,
+        children: {}
+      });
+    }
+    ,cancelOpenDir: function() {
+      this.showOpenDirModal = false;
     }
     ,onResizeSouth: function(south) {
       this.southSize = south;

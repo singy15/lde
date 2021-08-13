@@ -124,14 +124,13 @@
               </tips>
               -->
               
-              <!--
+              
               <tips msg="" v-on:on-hover="msgChanged">
-                <span class="span-button" @click="newFile">
+                <span class="span-button" @click="openDir">
                   <img src="/public/svg/directory.svg" width="10" height="10"/>
                   Open Dir
                 </span>
               </tips>
-              -->
               
               <tips msg="New file" v-on:on-hover="msgChanged">
                 <span class="span-button" @click="newFile">
@@ -393,6 +392,19 @@
         <br>
         <button type="button" @click="deleteFile">Yes</button>&nbsp;
         <button type="button" @click="cancelDeleteFile">Cancel</button>
+      </modal>
+      
+      <!-- Open dir modal -->
+      <modal modal-width="400" modal-height="200" :show="showOpenDirModal">
+        <span>Open directory</span>
+        <br>
+        <br>
+        <span>Please input directory path</span>
+        <br>
+        <input v-model="openDirPath" style="width:200px;"/>
+        <br>
+        <button type="button" @click="addDir">Open</button>&nbsp;
+        <button type="button" @click="cancelOpenDir">Cancel</button>
       </modal>
       
     </div>
