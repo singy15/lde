@@ -161,6 +161,10 @@
       (lambda (p)
         (ppcre:regex-replace escaped-basepath-str (namestring p) ""))
       (cl-fad:list-directory (merge-pathnames path basepath)))))
+      
+;;; Get list of file/directory by absolute path
+(defun get-file-list-abs (abs-path)
+  (cl-fad:list-directory abs-path))
 
 ;;; Get list of file/directory
 (defroute get-lis ("/lis" :method :post) ()
@@ -168,7 +172,18 @@
          (path (cdr (assoc :path param))))
     (json:encode-json-to-string
       `((data . ,(mapcar #'namestring (get-file-list path *basepath*)))
-        (msg . "foo")))))
+        (msg . "")))))
+        
+;;; Get list of file/directory by absolute path
+(defroute get-lis-abs ("/lis-abs" :method :post) ()
+  (let* ((param (json:decode-json-from-string (hunchentoot:raw-post-data :force-text t)))
+         (path (cdr (assoc :path param)))
+         (base (cdr (assoc :base param))))
+    (json:encode-json-to-string
+      `((data . (
+          (entry . ,(mapcar #'namestring (get-file-list-abs path)))
+          (base . ,base)))
+        (msg . "")))))
         
 ;;; Change basepath
 (defroute post-set-root ("/set-root" :method :post) ()
@@ -275,7 +290,7 @@
   (let* ((param (json:decode-json-from-string 
                  (hunchentoot:raw-post-data :force-text t)))
          (path (cdr (assoc :path param)))
-         (actual-path (merge-pathnames path *basepath*)))
+         (actual-path path))
     (hunchentoot:log-message* :INFO (namestring actual-path))
     (delete-file actual-path)
     (json:encode-json-to-string
@@ -304,7 +319,8 @@
 
 ;;; Get source
 (defroute get-editor ("/editor/file" :method :get) (filepath)
-  (let ((actual-path (merge-pathnames filepath *basepath*)))
+  ; (let ((actual-path (merge-pathnames filepath *basepath*)))
+  (let ((actual-path filepath))
     (json:encode-json-to-string
       `((data . 
           ((:filepath . ,filepath)
@@ -319,18 +335,18 @@
                  (hunchentoot:raw-post-data :force-text t)))
          (eval-on-save (cdr (assoc :eval-on-save param)))
          (multithread (cdr (assoc :multithread param))))
-    (lde.util:spit (merge-pathnames filepath *basepath*)
+    (lde.util:spit filepath
           (lde.util:trim (cdr (assoc :content param))))
     
-    (when (and (equal (pathname-type (merge-pathnames filepath *basepath*)) "lisp")
+    (when (and (equal (pathname-type filepath) "lisp")
                *session*
                eval-on-save)
       ; (format *session-input-stream* "(load \"~a\")~%" (merge-pathnames filepath *basepath*))
       ; (format *session-input-stream* "(sb-thread:make-thread (lambda () (load \"~a\")))~%" (merge-pathnames filepath *basepath*))
       ; (compile-file (merge-pathnames filepath *basepath*))
       (hunchentoot:log-message* :INFO "*** COMPILED: ~a > ~a ***~%" 
-        (merge-pathnames filepath *basepath*)
-        (merge-pathnames (format nil "~a.fasl" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*))))
+        filepath
+        (merge-pathnames (format nil "~a.fasl" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname filepath)))
         
   
       ; (format *session-input-stream* "(sb-thread:make-thread (lambda () (compile-file \"~a\") (load \"~a\")))~%" 
@@ -346,12 +362,12 @@
       (if multithread
         ;; Eval in sub thread
         (format *session-input-stream* "(if (and lde.client:*lde-thread* (sb-thread:thread-alive-p lde.client:*lde-thread*)) (sb-thread:interrupt-thread lde.client:*lde-thread* (lambda () (load \"~a\"))) (setf lde.client:*lde-thread* (sb-thread:make-thread (lambda () (load \"~a\")))))~%"
-          (merge-pathnames (format nil "~a.lisp" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*)))
-          (merge-pathnames (format nil "~a.lisp" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*))))
+          (merge-pathnames (format nil "~a.lisp" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname filepath))
+          (merge-pathnames (format nil "~a.lisp" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname filepath)))
   
         ;; Eval in main thread
         (format *session-input-stream* "(load \"~a\")~%"
-          (merge-pathnames (format nil "~a.lisp" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*)))))
+          (merge-pathnames (format nil "~a.lisp" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname filepath))))
 
       ; (load (merge-pathnames (format nil "~a.fasl" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*))))
       (finish-output *session-input-stream*))

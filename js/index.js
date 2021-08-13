@@ -2,6 +2,7 @@ import Vue from "vue";
 import { layout } from "./component_layout.js";
 import { editor } from "./component_editor.js";
 import { treeitem } from "./component_treeitem.js";
+import { tree } from "./component_tree.js";
 import { tips } from "./component_tips.js";
 import { StorageUtil } from "./storage_util.js";
 import { modal } from "./component_modal.js";
@@ -18,6 +19,7 @@ window.app = new Vue({
     "layout": layout
     ,"editor": editor
     ,"treeitem": treeitem
+    ,"tree": tree
     ,"tips": tips
     ,"modal": modal
   },
@@ -62,7 +64,51 @@ window.app = new Vue({
     southSize: storageUtil.getStorage("southSize", 200),
     southEastSize: storageUtil.getStorage("southEastSize", 400),
     showFileCreateModal: false,
-    showFileDeleteModal: false
+    showFileDeleteModal: false,
+    tree: {
+      base: "",
+      path: "",
+      children: {
+        
+        // "c:/root/wk/DumbAssert/": {
+        //   base: "c:/root/wk/DumbAssert/",
+        //   path: "c:/root/wk/DumbAssert/",
+        //   children: {
+        //     // "c:/root/a/a1/": {
+        //     //   base: "c:/root/a/",
+        //     //   path: "c:/root/a/a1/",
+        //     //   children: {
+        //     //     "c:/root/a/a1/a11": {
+        //     //       base: "c:/root/a/",
+        //     //       path: "c:/root/a/a1/a11",
+        //     //       children: {
+        //     //       }
+        //     //     }
+        //     //   }
+        //     // },
+        //     // "c:/root/a/a2/": {
+        //     //   base: "c:/root/a/",
+        //     //   path: "c:/root/a/a2/",
+        //     //   children: {
+        //     //     "c:/root/a/a2/a21": {
+        //     //       base: "c:/root/a/",
+        //     //       path: "c:/root/a/a2/a21",
+        //     //       children: {
+        //     //       }
+        //     //     }
+        //     //   }
+        //     // }
+        //   }
+        // },
+        // "c:/root/wk/designer/": {
+        //   base: "c:/root/wk/designer/",
+        //   path: "c:/root/wk/designer/",
+        //   children: {
+        //   }
+        // }
+      }
+    }
+    ,tabSeq: 0
   },
   methods: {
     onMountedEditorConsole: function (editor) {
@@ -110,39 +156,95 @@ window.app = new Vue({
         });
     },
     // Refresh file list
-    refreshFilelist: function (path) {
+    refreshFilelist: function (item) {
       var self = this;
-      fetch(encodeURI("/lis"), {
+      var base = this.tree.children[item.base];
+      var cur = this.tree.children[item.base];
+      
+      console.log(item.path.replace(/\/$/, "").replace(item.base, "").split("/"));
+      if(item.path !== item.base) {
+        _.each(item.path.replace(/\/$/, "").replace(item.base, "").split("/"), function(p) {
+          cur = cur.children[p];
+        });
+      }
+      
+ 
+      fetch(encodeURI("/lis-abs"), {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json;charset=utf-8",
-        },
-        body: JSON.stringify({
-          path: path 
+        headers: { "Content-Type": "application/json;charset=utf-8" },
+        body: JSON.stringify({ 
+          path: item.path, 
+          base: item.base
         }),
         cache: "no-store",
       })
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (data) {
-          // Create root structure
-          var splitted = self.curPath.split("/");
-          if(path === "") {
-            self.treeData = {
-              name: splitted[splitted.length - 2],
-              id: "ROOT",
-              entry: "directory",
-              path: "",
-              children: [],
-            };
-          }
-
-          // Iterate over all aplitted paths
-          _.each(data.data, function (f) {
-            self.addNodeToStructure(f);
-          });
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        _.each(data.data.entry, function (f) {
+  
+  //app.$set(app.tree.children["/c:/root/a/"].children, "/c:/root/a/a3/", { base: "/c:/root/a/", path: "/c:/root/a/a3/", children: {} });
+            var splitted = f.replace(/\/$/, "").split("/");
+            self.$set(cur.children, splitted[splitted.length - 1], {
+              base: data.data.base,
+              path: f,
+              children: {}
+            });
+    
+            // "c:/root/a/a1/": {
+            //   base: "c:/root/a/",
+            //   path: "c:/root/a/a1/",
+            //   children: {
+            //     "c:/root/a/a1/a11": {
+            //       base: "c:/root/a/",
+            //       path: "c:/root/a/a1/a11",
+            //       children: {
+            //       }
+            //     }
+            //   }
+  
         });
+        
+        console.log(cur);
+      });
+      
+      
+      
+      // console.log("foo", path);
+      // 
+      // var self = this;
+      // fetch(encodeURI("/lis-abs"), {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json;charset=utf-8",
+      //   },
+      //   body: JSON.stringify({
+      //     path: path 
+      //   }),
+      //   cache: "no-store",
+      // })
+      //   .then(function (response) {
+      //     return response.json();
+      //   })
+      //   .then(function (data) {
+      //     // Create root structure
+      //     var splitted = self.curPath.split("/");
+      //     if(path === "") {
+      //       self.treeData = {
+      //         name: splitted[splitted.length - 2],
+      //         id: "ROOT",
+      //         entry: "directory",
+      //         path: "",
+      //         children: [],
+      //       };
+      //     }
+// 
+      //     // Iterate over all aplitted paths
+      //     _.each(data.data.entry, function (f) {
+      //       self.addNodeToStructure(f);
+      //     });
+      //   });
     },
     addNodeToStructure: function(f) {
       var self = this;
@@ -200,7 +302,8 @@ window.app = new Vue({
       }
     },
     dblClick: function (item) {
-      var tabName = "TAB:" + app.tabs.length.toString();
+      var tabName = "TAB:" + this.tabSeq.toString();
+      this.tabSeq = this.tabSeq + 1;
 
       // for (var i = 0; i < this.tabs.length; i++) {
       //   if (this.tabs[i].src === `/editor?feature-id=${item.name}`) {
@@ -208,6 +311,8 @@ window.app = new Vue({
       //     return;
       //   }
       // }
+      
+      var splitted = item.path.split("/");
 
       console.log(item, {
         name: tabName,
@@ -217,7 +322,7 @@ window.app = new Vue({
       app.tabs.push({
         name: tabName,
         src: `/editor?target=${item.path}`,
-        dispName: item.name, 
+        dispName: splitted[splitted.length - 1], 
       });
 
       app.selectedTab = tabName;
@@ -229,7 +334,7 @@ window.app = new Vue({
     },
     moduleSelected: function (item) {
       console.log("select", item);
-      app.selectedModule = item.name;
+      app.selectedModule = item;
       this.selectedItem = item;
     },
     someInput: function (value) {
@@ -260,7 +365,7 @@ window.app = new Vue({
         });
     },
     onOpen: function(item) {
-      this.refreshFilelist(item.path);
+      this.refreshFilelist(item);
     },
     selectTab: function (tab) {
       app.selectedTab = tab.name;
@@ -462,8 +567,19 @@ shortcut.add("Ctrl+B", function () {
   app.evaluate(false);
 });
 
+// Add current path
+app.$set(app.tree.children, curPath, {
+  base: curPath,
+  path: curPath,
+  children: {}
+});
+        // "c:/root/wk/DumbAssert/": {
+        //   base: "c:/root/wk/DumbAssert/",
+        //   path: "c:/root/wk/DumbAssert/",
+        //   children: {
+
 // Refresh file list
-app.refreshFilelist("");
+//app.refreshFilelist("");
 
 // Update session status
 app.updateSessionStatus();

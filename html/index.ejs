@@ -151,6 +151,8 @@
             <!-- File tree -->
             <div class="file-tree-content">
               <span id="demo">
+                
+                <!--
                 <treeitem
                   class="item"
                   :item="treeData"
@@ -163,6 +165,21 @@
                   :selected-item="selectedModule"
                 >
                 </treeitem>
+                -->
+                
+                <tree
+                  :item="tree"
+                  :level="0"
+                  :parent="'/'"
+                  :open="true"
+                  @dbl-click="dblClick"
+                  @add-item="addItem"
+                  @selected="moduleSelected"
+                  @on-open="onOpen"
+                  :selected-item="selectedModule">
+                </tree>
+                
+                
               </span>
             </div>
           </div>
