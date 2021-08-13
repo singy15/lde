@@ -401,6 +401,11 @@ window.app = new Vue({
       this.refreshFilelist(this.selectedItem.path);
     }
     ,showFileDelete: function() {
+      if((this.selectedItem == null) 
+        || (this.selectedItem.entry !== "file")) {
+        return;
+      }
+      
       this.showFileDeleteModal = true;
     }
     ,deleteFile: function() {
@@ -409,7 +414,7 @@ window.app = new Vue({
       this.showFileDeleteModal = false;
       
       if((this.selectedItem == null) 
-        && (this.selectedItem.entry !== "file")) {
+        || (this.selectedItem.entry !== "file")) {
         return;
       }
      
