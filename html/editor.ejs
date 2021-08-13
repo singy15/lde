@@ -74,11 +74,14 @@
               <img style="display:inline-block; vertical-align:middle;" src="/public/svg/floppy.svg" width="15" height="15"/>
               <span style="display:inline-block; vertical-align:middle;">Save</span>
             </span>
+            
             <!-- <span class="span-button">Refresh</span> -->
+            
             <span class="span-button" @click="evaluate" v-if="language === 'lisp'" style="line-height:15px;">
               <img style="display:inline-block; vertical-align:middle;" src="/public/svg/eval.svg" width="15" height="15"/>
-              <span style="display:inline-block; vertical-align:middle;">Evaluate</span>
+              <span style="display:inline-block; vertical-align:middle;">Evaluate (Ctrl+B, Eval in thread: Ctrl+Shift+B)</span>
             </span>
+                          
             <label class="span-button" v-if="language === 'lisp'" style="line-height:15px;">
               <input style="display:inline-block; vertical-align:middle;" type="checkbox" v-model="evalOnSave"/>
               <span style="display:inline-block; vertical-align:middle;">EvalOnSave</span>
