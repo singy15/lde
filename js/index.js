@@ -370,7 +370,7 @@ window.app = new Vue({
     }
     ,newFile: function() {
       if((this.selectedItem == null) 
-        && (this.selectedItem.entry !== "directory")) {
+        || (this.selectedItem.entry !== "directory")) {
         return;
       }
       
