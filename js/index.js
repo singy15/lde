@@ -597,11 +597,11 @@ shortcut.add("Ctrl+B", function () {
 });
 
 // Add current path
-app.$set(app.tree.children, curPath, {
-  base: curPath,
-  path: curPath,
-  children: {}
-});
+// app.$set(app.tree.children, curPath, {
+//   base: curPath,
+//   path: curPath,
+//   children: {}
+// });
         // "c:/root/wk/DumbAssert/": {
         //   base: "c:/root/wk/DumbAssert/",
         //   path: "c:/root/wk/DumbAssert/",
