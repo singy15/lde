@@ -450,8 +450,6 @@ shortcut.add("Ctrl+B", function () {
   app.evaluate(false);
 });
 
-
-app.refreshFilelist();
 app.getFile();
 
 console.log("editor");
