@@ -336,7 +336,7 @@
          (eval-on-save (cdr (assoc :eval-on-save param)))
          (multithread (cdr (assoc :multithread param))))
     (lde.util:spit filepath
-          (lde.util:trim (cdr (assoc :content param))))
+      (concatenate 'string (lde.util:trim (cdr (assoc :content param))) (format nil "~%")))
     
     (when (and (equal (pathname-type filepath) "lisp")
                *session*
