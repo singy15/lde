@@ -336,28 +336,15 @@
          (eval-on-save (cdr (assoc :eval-on-save param)))
          (multithread (cdr (assoc :multithread param))))
     (lde.util:spit filepath
-      (concatenate 'string (lde.util:trim (cdr (assoc :content param))) (format nil "~%")))
+      (concatenate 'string (lde.util:trim (cdr (assoc :content param))) 
+        (format nil "~%")))
     
     (when (and (equal (pathname-type filepath) "lisp")
                *session*
                eval-on-save)
-      ; (format *session-input-stream* "(load \"~a\")~%" (merge-pathnames filepath *basepath*))
-      ; (format *session-input-stream* "(sb-thread:make-thread (lambda () (load \"~a\")))~%" (merge-pathnames filepath *basepath*))
-      ; (compile-file (merge-pathnames filepath *basepath*))
       (hunchentoot:log-message* :INFO "*** COMPILED: ~a > ~a ***~%" 
         filepath
         (merge-pathnames (format nil "~a.fasl" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname filepath)))
-        
-  
-      ; (format *session-input-stream* "(sb-thread:make-thread (lambda () (compile-file \"~a\") (load \"~a\")))~%" 
-      ;   (merge-pathnames (format nil "~a.lisp" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*)))
-      ;   (merge-pathnames (format nil "~a.fasl" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*)))
-      ;   )      
-      ;(format *session-input-stream* "(sb-thread:make-thread (lambda () (load \"~a\")))~%" 
-       ; (merge-pathnames (format nil "~a.fasl" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*))))
-  
-      ; (format *session-input-stream* "(sb-thread:make-thread (lambda () (load \"~a\")))~%" 
-      ;   (merge-pathnames (format nil "~a.lisp" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*))))
        
       (if multithread
         ;; Eval in sub thread
@@ -369,7 +356,6 @@
         (format *session-input-stream* "(load \"~a\")~%"
           (merge-pathnames (format nil "~a.lisp" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname filepath))))
 
-      ; (load (merge-pathnames (format nil "~a.fasl" (namestring (pathname-name filepath))) (cl-fad:pathname-directory-pathname (merge-pathnames filepath *basepath*))))
       (finish-output *session-input-stream*))
     
     (json:encode-json-to-string
