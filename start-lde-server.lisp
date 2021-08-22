@@ -2,5 +2,5 @@
 (ql:quickload :lde)
 
 ;; Start server
-(lde:start-lde-server 4245)
+(lde:main)
 
