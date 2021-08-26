@@ -14,14 +14,18 @@ var tree = {
           
           <!-- Opener -->
           <span style="display:inline-block; width:10px;" @click="toggle">
-            <img v-if="isDirectory && (!isOpen)" src="/public/svg/plus.svg" width="10" height="10"/>
-            <img v-if="isDirectory && (isOpen)" src="/public/svg/minus.svg" width="10" height="10"/>
+            <!-- <img v-if="isDirectory && (!isOpen)" src="/public/svg/plus.svg" width="10" height="10"/> -->
+            <span v-if="isDirectory && (!isOpen)" uk-icon="icon: chevron-right" width="10" height="10"></span>
+            <!-- <img v-if="isDirectory && (isOpen)" src="/public/svg/minus.svg" width="10" height="10"/> -->
+            <span v-if="isDirectory && (isOpen)" uk-icon="icon: chevron-down" width="10" height="10"></span>
           </span>
           
           <!-- Icon -->
           <img v-if="isBaseEntry" src="/public/svg/circle.svg" width="12" height="10"/>
-          <img v-if="!isBaseEntry && isDirectory" src="/public/svg/directory.svg" width="12" height="10"/>
-          <img v-if="!isBaseEntry && !isDirectory" src="/public/svg/file.svg" width="12" height="12"/>
+          <span v-if="!isBaseEntry && isDirectory" uk-icon="icon: folder" width="16" height="16"></span>
+          <!-- <img v-if="!isBaseEntry && isDirectory" src="/public/svg/directory.svg" width="12" height="10"/> -->
+          <span v-if="!isBaseEntry && !isDirectory" uk-icon="icon: file" width="16" height="16"></span>
+          <!-- <img v-if="!isBaseEntry && !isDirectory" src="/public/svg/file.svg" width="12" height="12"/> -->
           
           <!-- Display name -->
           <span :style="(item === selectedItem)? 'text-decoration: underline; cursor: pointer; white-space: nowrap;' : 'cursor: pointer; white-space: nowrap;'" 

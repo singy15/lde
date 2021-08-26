@@ -39,6 +39,7 @@
     "angular-html-parser": "^1.7.1",
     "file-loader": "^6.2.0",
     "popper.js": "^1.16.1",
+    "uikit": "^3.7.2",
     "underscore": "^1.13.1",
     "vue": "^2.6.11"
   }

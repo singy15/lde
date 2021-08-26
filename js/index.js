@@ -17,6 +17,10 @@ import { tips } from "./component_tips.js";
 import { StorageUtil } from "./storage_util.js";
 import { modal } from "./component_modal.js";
 
+import UIkit from 'uikit';
+import Icons from 'uikit/dist/js/uikit-icons';
+UIkit.use(Icons);
+
 var storageUtil = new StorageUtil("lde/index/");
 
 /*
