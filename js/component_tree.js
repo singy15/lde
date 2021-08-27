@@ -21,10 +21,11 @@ var tree = {
           </span>
           
           <!-- Icon -->
-          <img v-if="isBaseEntry" src="/public/svg/circle.svg" width="12" height="10"/>
+          <span v-if="isBaseEntry" uk-icon="icon: thumbnails" width="16" height="16"></span>
+          <!-- <img v-if="isBaseEntry" src="/public/svg/circle.svg" width="12" height="10"/> -->
           <span v-if="!isBaseEntry && isDirectory" uk-icon="icon: folder" width="16" height="16"></span>
           <!-- <img v-if="!isBaseEntry && isDirectory" src="/public/svg/directory.svg" width="12" height="10"/> -->
-          <span v-if="!isBaseEntry && !isDirectory" uk-icon="icon: file" width="16" height="16"></span>
+          <span v-if="!isBaseEntry && !isDirectory" uk-icon="icon: file" width="14" height="14"></span>
           <!-- <img v-if="!isBaseEntry && !isDirectory" src="/public/svg/file.svg" width="12" height="12"/> -->
           
           <!-- Display name -->

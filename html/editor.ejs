@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" href="/public/css/uikit.min.css">
     <link rel="stylesheet" href="/public/css/style.css">
     <style>
       html,body {
@@ -45,7 +46,7 @@
     </style>
   </head>
   <body>
-    <div id="app">
+    <div id="app" class="uk-light">
       <title>xra[[ (filepath !== "")? " - " + filepath : "" ]]</title>
 
       <div class="blocker" v-show="blocked"></div>
@@ -70,22 +71,49 @@
         <template v-slot:north>
           <div class="text-light" style="padding-left:5px;">
             
+          <!--
             <span class="span-button" @click="postFile" style="line-height:15px;">
-              <img style="display:inline-block; vertical-align:middle;" src="/public/svg/floppy.svg" width="15" height="15"/>
-              <span style="display:inline-block; vertical-align:middle;">Save</span>
+              <span uk-icon="icon: file-edit" width="10" height="10"></span>
+              <button class="uk-text-small uk-button uk-button-text uk-light">
+                Save
+              </button>
             </span>
+          -->
+            
+            <span uk-icon="icon: file-edit" width="12" height="12"></span>
+            <button class="uk-text-small uk-button uk-button-text uk-light" @click="postFile">
+              Save
+            </button>
+            
+            &nbsp;&nbsp;
             
             <!-- <span class="span-button">Refresh</span> -->
             
+            <!--
             <span class="span-button" @click="evaluate" v-if="language === 'lisp'" style="line-height:15px;">
               <img style="display:inline-block; vertical-align:middle;" src="/public/svg/eval.svg" width="15" height="15"/>
               <span style="display:inline-block; vertical-align:middle;">Evaluate (Ctrl+B, Eval in thread: Ctrl+Shift+B)</span>
             </span>
-                          
+            -->
+            <span uk-icon="icon: bolt" width="12" height="12" v-if="language === 'lisp'"></span>
+            <button class="uk-text-small uk-button uk-button-text uk-light" @click="evaluate" v-if="language === 'lisp'">
+              Evaluate (Ctrl+B, Eval in thread: Ctrl+Shift+B)
+            </button>
+            
+            
+            &nbsp;&nbsp;
+            
+            <!-- 
             <label class="span-button" v-if="language === 'lisp'" style="line-height:15px;">
               <input style="display:inline-block; vertical-align:middle;" type="checkbox" v-model="evalOnSave"/>
               <span style="display:inline-block; vertical-align:middle;">EvalOnSave</span>
             </label>
+            -->
+            <label>
+              <input class="uk-text-small uk-light" type="checkbox" style="display:inline-block; vertical-align:middle;" v-model="evalOnSave" v-if="language === 'lisp'"/>
+              <span class="uk-text-small uk-button uk-button-text uk-light" v-if="language === 'lisp'">Eval on Save</span>
+            </label>
+            
           </div>
         </template>
 

@@ -11,6 +11,10 @@ import _ from 'underscore';
 import Vue from "vue";
 import { layout } from "./component_layout.js";
 
+import UIkit from 'uikit';
+import Icons from 'uikit/dist/js/uikit-icons';
+UIkit.use(Icons);
+
 var storageRootKey = "lde/editor/";
 
 /*

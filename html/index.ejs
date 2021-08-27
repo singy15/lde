@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="/public/css/style.css">
     <style>
       .input-path {
-        font-size: 0.85rem; 
+        /*font-size: 0.85rem;*/ 
         padding-left: 10px; 
         padding-right: 10px; 
         padding-top: 3px; 
@@ -70,7 +70,7 @@
     </style>
   </head>
   <body>
-    <div id="app" class="uk-dark">
+    <div id="app" class="uk-light">
       <layout
         layout-id="layout"
         border-width="4"
@@ -126,27 +126,34 @@
               -->
             
               <tips msg="" v-on:on-hover="msgChanged">
-                <span class="span-button" @click="openDir">
+                <span uk-icon="icon: folder" width="10" height="10"></span>
+                <button class="uk-text-small uk-button uk-button-text uk-light" @click="openDir">
                   <!-- <img src="/public/svg/directory.svg" width="10" height="10"/> -->
-                  <span uk-icon="icon: folder" width="12" height="12"></span>
-                  Open Dir
-                </span>
+                  
+                  Open
+                </button>
               </tips>
+              
+              &nbsp;
               
               <tips msg="New file" v-on:on-hover="msgChanged">
-                <span class="span-button" @click="newFile">
+                <span uk-icon="icon: plus" width="10" height="10"></span>
+                <button class="uk-text-small uk-button uk-button-text uk-light" @click="newFile">
                   <!-- <img src="/public/svg/plus.svg" width="10" height="10"/> -->
-                  <span uk-icon="icon: plus" width="12" height="12"></span>
+                  
                   Add
-                </span>
+                </button>
               </tips>
               
+              &nbsp;
+              
               <tips msg="Delete file" v-on:on-hover="msgChanged">
-                <span class="span-button" @click="showFileDelete">
+                <span uk-icon="icon: minus" width="10" height="10"></span>
+                <button class="uk-text-small uk-button uk-button-text uk-light" @click="showFileDelete">
                   <!-- <img src="/public/svg/cross.svg" width="10" height="10"/> -->
-                  <span uk-icon="icon: minus" width="12" height="12"></span>
+                  
                   Delete
-                </span>
+                </button>
               </tips>
             </div>
 
@@ -242,14 +249,14 @@
                 <li v-for="tab in tabs" 
                   :class="((selectedTab === tab.name)? ' uk-active uk-margin-remove' : 'uk-margin-remove')" 
                   style="cursor:pointer;">
-                  <a href="#" style=" color:#FFF;  font-size:0.7rem;" @click="selectTab(tab)">[[ tab.dispName ]]
+                  <a href="#" class="uk-text-small" style=" color:#FFF;" @click="selectTab(tab)">[[ tab.dispName ]]
                   &nbsp;&nbsp;
-                  <span
+                  <span uk-icon="icon: close"
                     v-on:click.stop="closeTab(tab)"
-                    class=""
                     style="text-decoration:none;  font-size:0.7rem;"
+                    width="10" height="10"
                   >
-                    x
+                    
                   </span>
                   </a>
 
@@ -293,7 +300,7 @@
                         <span v-if="!sessionOpened" uk-icon="icon: play-circle" width="16" height="16"></span>
                       </span>
                       
-                      <input class="uk-input-small input-path" v-model="curPath" 
+                      <input class="uk-input-small uk-text-small input-path" v-model="curPath" 
                         @keydown.enter="changeRoot" 
                         style="width:calc(100% - 52px); margin:1px; display:inline-block;"/>
                       
