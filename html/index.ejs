@@ -70,7 +70,7 @@
     </style>
   </head>
   <body>
-    <div id="app">
+    <div id="app" class="uk-dark">
       <layout
         layout-id="layout"
         border-width="4"
@@ -293,7 +293,7 @@
                         <span v-if="!sessionOpened" uk-icon="icon: play-circle" width="16" height="16"></span>
                       </span>
                       
-                      <input class="input-path" v-model="curPath" 
+                      <input class="uk-input-small input-path" v-model="curPath" 
                         @keydown.enter="changeRoot" 
                         style="width:calc(100% - 52px); margin:1px; display:inline-block;"/>
                       
