@@ -15,11 +15,15 @@
     "clack"
     "bordeaux-threads")
   :components ((:module "src"
-                :components
-                ((:file "package-util")
-                 (:file "package-lde")
-                 (:file "util")
-                 (:file "lde"))))
+                :components (
+                  (:file "util.package")
+                  (:file "lde.package")
+                  (:file "editor.package")
+                  
+                  (:file "util")
+                  (:file "lde")
+                  (:file "editor")
+                )))
   :description ""
   :in-order-to ((test-op (test-op "lde/tests"))))
 
@@ -33,4 +37,3 @@
                 ((:file "main"))))
   :description "Test system for lde"
   :perform (test-op (op c) (symbol-call :rove :run c)))
-

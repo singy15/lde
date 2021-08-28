@@ -118,20 +118,8 @@
         (sb-ext:process-exit-code *session*)
         (setf *session* nil))
 
-      ; (format t "Signal kill thread~%")
-      ; (setf *session-thread-alive* nil)
-
-      ; (when *session-thread*
-      ;   (format t "Wait for join-thread *session-thread*~%")
-      ;   (bordeaux-threads:join-thread *session-thread*))
-
-      ; (when *session-output-send-thread*
-      ;   (format t "Wait for join-thread *session-output-send-thread~%")
-      ;   (bordeaux-threads:join-thread *session-output-send-thread*))
-
       (cl-user::exit))
-    (sleep 1))
-)
+    (sleep 1)))
 
 ;;; Stop lde server
 (defun stop-lde-server ()
