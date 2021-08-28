@@ -1,0 +1,4 @@
+(
+  :PORT 9500
+  :AUTO-OPEN t
+)

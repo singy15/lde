@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link rel="stylesheet" href="/public/css/uikit.min.css">
+    <title>lde</title>
+    <link rel="stylesheet" href="/public/css/style.css">
+    <style>
+      .input-path {
+        /*font-size: 0.85rem;*/ 
+        padding-left: 10px; 
+        padding-right: 10px; 
+        padding-top: 3px; 
+        padding-bottom: 3px; 
+        background-color: #3c3e52; 
+        color: #f8f9fa;
+        border: solid 1px #f8f9fa; 
+        border-radius: 4px;
+        outline: none;
+        line-height: 14px;
+      }
+      
+      .tool-palette {
+        position: relative;
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        height: 10px;
+        text-align: right;
+      }
+      
+      .file-tree-content {
+        position: relative;
+        top: 20px;
+        left: 0px;
+        right: 0px;
+        height: calc(100% - 30px);
+        overflow: hidden auto;
+      }
+
+      .planet {
+        position:absolute;
+        left:18px;
+        top:7px;
+        border-radius: 12px;
+        background-color: rgba(255, 255, 255, 0.5);
+        width: 24px;
+        height: 24px;
+        z-index: 1000;
+        display:block;
+        box-shadow: -1px 0px 3px 3px rgba(255,255,255,0.2);
+      }
+      
+      .planet:after {
+        position:absolute;
+        left:1px;
+        top:1px;
+        content: "";
+        display:block;
+        border-radius: 12px;
+        background-color: rgba(0, 0, 0, 0.7);
+        width: 23px;
+        height: 23px;
+        z-index: 1000;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app" class="uk-light">
+      <layout
+        layout-id="layout"
+        border-width="4"
+        size-north="40"
+        size-west="250"
+        size-south="24"
+        disable-east="true"
+        class-north="bg-dark text-light"
+        class-south="bg-dark text-light"
+        class-west="bg-dark text-light"
+        class-east="bg-dark text-light"
+        class-center="bg-dark text-light"
+        style-west="padding:5px;"
+        style-north="padding:6px; padding-left:12px; background-color:#3c3e52;"
+        style-south="padding:2px; background-color:#3c3e52;"
+        resizable-north="false"
+        resizable-south="false"
+        resizable-east="false"
+      >
+        <!-- North -->
+        <template v-slot:north>
+          <div style="position:absolute; left:0px; right:0px; top:0px; bottom:0px;">
+            
+            <div class="planet"></div>
+
+            <span style="color:white; display:block; 
+              position:absolute; top:8px; left:32px; 
+              text-decoration:underline;
+              z-index:2000;">&nbsp;&nbsp;&nbsp;lde&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
+          </div>
+        </template>
+
+        <!-- South -->
+        <template v-slot:south>
+          <span style="color:white;"
+            >&nbsp;[[ statusMessage ]]</span
+          >
+        </template>
+
+        <!-- West -->
+        <template v-slot:west>
+          <div style="white-space:nowrap; 
+            overflow:hidden auto; position:absolute; left:0px; 
+            top:0px; right:0px; bottom:0px; padding:5px;">
+            
+            <!-- Tools -->
+            <div class="tool-palette">
+              <!--
+              <tips msg="Refresh file list" v-on:on-hover="msgChanged">
+                <span class="span-button" @click="refreshDirectory">Refresh</span>
+              </tips>
+              -->
+            
+              <tips msg="" v-on:on-hover="msgChanged">
+                <span uk-icon="icon: folder" width="10" height="10"></span>
+                <button class="uk-text-small uk-button uk-button-text uk-light" @click="openDir">
+                  <!-- <img src="/public/svg/directory.svg" width="10" height="10"/> -->
+                  
+                  Open
+                </button>
+              </tips>
+              
+              &nbsp;
+              
+              <tips msg="New file" v-on:on-hover="msgChanged">
+                <span uk-icon="icon: plus" width="10" height="10"></span>
+                <button class="uk-text-small uk-button uk-button-text uk-light" @click="newFile">
+                  <!-- <img src="/public/svg/plus.svg" width="10" height="10"/> -->
+                  
+                  Add
+                </button>
+              </tips>
+              
+              &nbsp;
+              
+              <tips msg="Delete file" v-on:on-hover="msgChanged">
+                <span uk-icon="icon: minus" width="10" height="10"></span>
+                <button class="uk-text-small uk-button uk-button-text uk-light" @click="showFileDelete">
+                  <!-- <img src="/public/svg/cross.svg" width="10" height="10"/> -->
+                  
+                  Delete
+                </button>
+              </tips>
+            </div>
+
+            <!-- File tree -->
+            <div class="file-tree-content">
+              <span id="demo">
+                
+                <!--
+                <treeitem
+                  class="item"
+                  :item="treeData"
+                  :level="0"
+                  :open="false"
+                  @dbl-click="dblClick"
+                  @add-item="addItem"
+                  @selected="moduleSelected"
+                  @on-open="onOpen"
+                  :selected-item="selectedModule"
+                >
+                </treeitem>
+                -->
+                
+                <tree
+                  :item="tree"
+                  :level="0"
+                  :parent="'/'"
+                  :open="true"
+                  @dbl-click="dblClick"
+                  @add-item="addItem"
+                  @selected="moduleSelected"
+                  @on-open="onOpen"
+                  :selected-item="selectedModule">
+                </tree>
+                
+                
+              </span>
+            </div>
+          </div>
+        </template>
+
+        <!-- East -->
+        <template v-slot:east></template>
+
+        <!-- Center -->
+        <template v-slot:center>
+          
+          <layout
+            layout-id="layout-main"
+            border-width="4"
+            class-north=""
+            class-south="bg-dark text-light"
+            class-west="bg-dark text-light"
+            class-east="bg-dark text-light"
+            class-center="bg-dark text-light"
+            size-north="30"
+            disable-west="true"
+            :size-south="southSize"
+            disable-east="true"
+            resizable-north="false"
+            resizable-east="false"
+            resizable-west="false"
+            @on-resize-south="onResizeSouth"
+          >
+            
+            <template v-slot:north>
+              <!-- Tabs -->
+              <!--
+              <div
+                style="position:absolute; top:0px; height:30px; 
+                left:0px; width:100%; border-bottom:solid 1px #AAA;"
+              >
+                <span class="nav nav-tabs" style="font-size:0.9rem">
+                  <span :class="'nav-item ' + ((selectedTab === tab.name)? ' bg-dark-active' : '')" 
+                    v-for="tab in tabs" style="box-sizing:border-box; border-right:solid 1px #FFF; border-bottom:solid 1px #FFF; padding:6px;">
+                    <span
+                      :class="'nav-link bg-dark text-light ' + ((selectedTab === tab.name)? ' bg-dark-active' : '') "
+                      @click="selectTab(tab)"
+                      style="cursor:pointer;"
+                      >[[ tab.dispName ]]
+                    </span>
+                    <span
+                      v-on:click.stop="closeTab(tab)"
+                      class="span-button"
+                      style="text-decoration:none;"
+                    >
+                      <img style="display:inline-block; vertical-align:middle;" src="/public/svg/cross.svg" width="10" height="10"/>
+                    </span>
+                  </span>
+                </span>
+              </div>
+              -->
+              <ul uk-tab="animation:true;">
+                <li v-for="tab in tabs" 
+                  :class="((selectedTab === tab.name)? ' uk-active uk-margin-remove' : 'uk-margin-remove')" 
+                  style="cursor:pointer;">
+                  <a href="#" class="uk-text-small" style=" color:#FFF;" @click="selectTab(tab)">[[ tab.dispName ]]
+                  &nbsp;&nbsp;
+                  <span uk-icon="icon: close"
+                    v-on:click.stop="closeTab(tab)"
+                    style="text-decoration:none;  font-size:0.7rem;"
+                    width="10" height="10"
+                  >
+                    
+                  </span>
+                  </a>
+
+                </li>
+              </ul>
+            </template>
+            
+            <template v-slot:south>
+              <layout
+                layout-id="layout-south"
+                border-width="4"
+                disable-north="true"
+                disable-west="true"
+                disable-south="true"
+                :size-east="southEastSize"
+                resizable-north="false"
+                resizable-south="false"
+                resizable-west="false"
+                @on-resize-east="onResizeSouthEast"
+              >
+                <template v-slot:east>
+                  <editor
+                    v-if="sessionOpened"
+                    editor-id="editor-console-input"
+                    :content="contentConsoleInput"
+                    v-on:change-content="changeContentConsoleInput"
+                    v-on:on-mounted="onMountedEditorConsoleInput"
+                    :lang="'text'"
+                    theme="monokai"
+                  ></editor>
+                </template>
+                <template v-slot:center>
+                  <div style="height:100%; width:100%;">
+                    <div style="height:24px; vertical-align:middle; border-bottom:solid 1px #FFF;">
+                      
+                      <span class="span-button" style="cursor:pointer; display:inline-block;"
+                        @click="openSession">
+                        <!-- <img v-if="!sessionOpened" src="/public/svg/play.svg" style="display:inline-block; width:10px; height:10px; margin-top:2px; margin-left:2px;"/> -->
+                        <span v-if="sessionOpened" uk-icon="icon: play" width="16" height="16"></span>
+                        <!-- <img v-if="sessionOpened" src="/public/svg/stop.svg" style="display:inline-block; width:10px; height:10px; margin-top:2px; margin-left:2px;"/> -->
+                        <span v-if="!sessionOpened" uk-icon="icon: play-circle" width="16" height="16"></span>
+                      </span>
+                      
+                      <input class="uk-input-small uk-text-small input-path" v-model="curPath" 
+                        @keydown.enter="changeRoot" 
+                        style="width:calc(100% - 52px); margin:1px; display:inline-block;"/>
+                      
+                    </div>
+                    <div style="height:calc(100% - 24px); width:100%;">
+                      <editor
+                        v-if="sessionOpened"
+                        editor-id="editor-console"
+                        :content="contentConsole"
+                        v-on:change-content="changeContentConsole"
+                        v-on:on-mounted="onMountedEditorConsole"
+                        :lang="'text'"
+                        theme="monokai"
+                      ></editor>
+                    </div>
+                  </div>
+                </template>
+              </layout>
+            </template>
+            
+            <template v-slot:center>
+              <div>
+                <!-- Application -->
+                <div
+                  style="position:absolute; top:0px; 
+                  bottom:0px; left:0px; right:0px;">
+                  <iframe
+                    class="embed-responsive-item"
+                    v-for="tab in tabs"
+                    :src="tab.src"
+                    style="width:100%;height:100%;border:none;"
+                    v-show="selectedTab === tab.name">
+                  </iframe>
+                </div>
+  
+                <!-- Empty -->
+                <div
+                  v-show="tabs.length === 0"
+                  style="position:absolute; top:0px;; 
+                  bottom:0px; left:0px; width:100%; text-align:center;"
+                >
+                  <span
+                    style="display:inline-block; position:relative; top:50%;"
+                  ></span>
+                </div>
+              </div>
+            </template>
+            
+          </layout>
+        </template>
+        
+      </layout>
+      
+      <!--
+      <div class="modal fade" id="modal1" tabindex="-1" role="dialog" 
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Create new file</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Input file name
+              
+              <input class="form-control" v-model="nameNewFile"/>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary"  data-dismiss="modal" @click="openNewFile">Create</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal fade" id="modal2" tabindex="-1" role="dialog" 
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Info</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              File deleted
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      -->
+      
+      <!-- File create modal -->
+      <modal modal-width="400" modal-height="200" :show="showFileCreateModal">
+        <span>Creating file</span>
+        <br>
+        <br>
+        <span>Please input file name:</span>
+        <br>
+        <input v-model="nameNewFile" style="width:200px;"/>
+        <br>
+        <br>
+        <button type="button" @click="openNewFile">Create</button>&nbsp;
+        <button type="button" @click="cancelNewFile">Cancel</button>
+      </modal>
+      
+      <!-- File delete modal -->
+      <modal modal-width="400" modal-height="200" :show="showFileDeleteModal">
+        <span>Deleting file</span>
+        <br>
+        <br>
+        <span>Are you sure?</span>
+        <br>
+        <br>
+        <button type="button" @click="deleteFile">Yes</button>&nbsp;
+        <button type="button" @click="cancelDeleteFile">Cancel</button>
+      </modal>
+      
+      <!-- Open dir modal -->
+      <modal modal-width="400" modal-height="200" :show="showOpenDirModal">
+        <span>Open directory</span>
+        <br>
+        <br>
+        <span>Please input directory path</span>
+        <br>
+        <input v-model="openDirPath" style="width:200px;"/>
+        <br>
+        <button type="button" @click="addDir">Open</button>&nbsp;
+        <button type="button" @click="cancelOpenDir">Cancel</button>
+      </modal>
+      
+    </div>
+
+    <script src="/public/lib/shortcut.js"></script>
+    <script src="https://unpkg.com/prettier@2.2.0/standalone.js"></script>
+    <script src="https://unpkg.com/prettier@2.2.0/parser-html.js"></script>
+    <script src="https://unpkg.com/prettier@2.2.0/parser-babel.js"></script>
+
+    <script>
+      var curPath = "{{ cur-path }}";
+      var portWeb = {{ port-web }};
+      var portWs = {{ port-ws }};
+
+
+      function keepAlive() {
+        fetch("/siki/keep-alive",{
+          method: "GET",
+          headers: { "Content-Type": "application/json" }
+        })
+        .catch(function(e) {
+          // when failed (server dead)
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+          console.log("keep-alive sent");
+        });
+      }
+
+      // Keep alive
+      setInterval(keepAlive, 1000 * 10);
+      keepAlive();
+    </script>
+
+    <script src="/public/js/index.js?6b7aab26504d55fdd16b"></script>
+  </body>
+</html>
